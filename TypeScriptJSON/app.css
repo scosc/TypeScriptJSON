@@ -1,0 +1,97 @@
+﻿body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+span {
+    font-style: italic;
+}
+
+
+/*show one "page" at a time*/
+
+.page{
+  display: none;
+}
+
+section.page:target{
+  display:block;
+}
+
+/*expander*/
+.toggle-box {
+  display: none;
+}
+
+.toggle-box + label {
+  cursor: pointer;
+  display: block;
+  font-weight: bold;
+  line-height: 21px;
+  margin-bottom: 5px;
+}
+
+.toggle-box + label + div {
+  display: none;
+  margin-bottom: 10px;
+}
+
+.toggle-box:checked + label + div {
+  display: block;
+}
+
+.toggle-box + label:before {
+  background-color: #4F5150;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #FFFFFF;
+  content: "+";
+  display: block;
+  float: left;
+  font-weight: bold;
+  height: 20px;
+  line-height: 15px;
+  margin-right: 5px;
+  text-align: center;
+  width: 20px;
+}
+
+.toggle-box:checked + label:before {
+  content: "\2212";
+} 
+
+
+
+.required input:focus {
+    outline: none;
+    box-shadow: 0  0 3px rgba(255,0,0,0.5); 
+}
+
+.required label {
+    font-weight: bold;
+}
+.required label:before {
+    color: #e32;
+    content: ' *';
+    display:inline;    
+}
+
+.row {
+    margin-top:5px;
+}
+
+    .row label {
+        width:300px;
+        margin-left:10px;
+        display:inline-block;
+    }
+
+    .row input {
+        width:300px;
+        margin-left:10px;
+        display:inline-block;
+    }
+
+        .row input[type=checkbox] {
+            width:16px;
+        }

@@ -1,0 +1,6 @@
+﻿/*.k-textbox:hover, .k-tiles li.k-state-hover {
+    border-color: #62b865;
+}*/
+.k-textbox:hover, .k-tiles li.k-state-hover {
+    border-color: #808080;
+}
