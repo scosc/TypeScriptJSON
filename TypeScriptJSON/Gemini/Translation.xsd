@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Translator"
+    targetNamespace="http://SattelliteCom/Schemas/Translation.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://SattelliteCom/Schemas/Translation.xsd"
+    xmlns:mstns="http://SattelliteCom/Schemas/Translation.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+> 
+  <xs:complexType name="PackTranslation" mixed="true">
+    <xs:attribute name="key" type="xs:string" use="required"></xs:attribute>
+  </xs:complexType>  
+
+  <xs:element name="Translations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Translation" type="PackTranslation" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="Language" use="optional"></xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

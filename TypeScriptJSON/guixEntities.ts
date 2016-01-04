@@ -14,7 +14,7 @@ namespace guixEntities {
 
     export class GuixObject {
         Attached: string;
-        Row: string;
+        Row: number;
     }
 
     export class GuixTableColumn {

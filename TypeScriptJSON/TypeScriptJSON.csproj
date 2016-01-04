@@ -26,6 +26,8 @@
     <Content Include="app.js" />
     <Content Include="changelog.html" />
     <Content Include="css-treeview.css" />
+    <Content Include="Gemini\Gemini.js" />
+    <Content Include="Gemini\Gemini.partial.js" />
     <Content Include="images\icons\ico_treeExp_close.png" />
     <Content Include="images\icons\ico_treeExp_open.png" />
     <Content Include="index.html" />
@@ -377,9 +379,14 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Api\Api.ts" />
+    <TypeScriptCompile Include="Api\Request.ts" />
+    <TypeScriptCompile Include="Api\RequestSender.ts" />
+    <TypeScriptCompile Include="Api\Models\SoftwareRepository.ts" />
+    <TypeScriptCompile Include="Api\Serializer.ts" />
     <TypeScriptCompile Include="app.ts" />
-    <TypeScriptCompile Include="mibxEntities.ts" />
-    <TypeScriptCompile Include="guixEntities.ts" />
+    <TypeScriptCompile Include="Gemini\Gemini.partial.ts" />
+    <TypeScriptCompile Include="Gemini\Gemini.ts" />
     <TypeScriptCompile Include="jsondata.ts" />
     <TypeScriptCompile Include="Scripts\typescript\kendo-ui\kendo.all.d.ts" />
     <TypeScriptCompile Include="Scripts\typescript\jquery\jquery.d.ts" />
@@ -388,7 +395,9 @@
     <TypeScriptCompile Include="Scripts\typescript\lodash\lodash.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="README" />
     <Content Include="styles\fonts\DejaVu\DejaVuSans-Bold.ttf" />
     <Content Include="styles\fonts\DejaVu\DejaVuSans-BoldOblique.ttf" />
@@ -408,6 +417,18 @@
     <Content Include="Scripts\js\jquery.min.map" />
     <Content Include="Scripts\js\kendo.all.min.js.map" />
     <Content Include="app.js.map" />
+    <EmbeddedResource Include="Gemini\Guix.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gemini\Mibx.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gemini\Translation.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="Gemini\ModifyJSCript2TypedScript.ps1" />
+    <Content Include="fiddler\GetSoftwareRepository.json" />
+    <Content Include="fiddler\MVSAT_1.3.gdfx.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -464,10 +485,16 @@
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <TypeScriptEmitDecoratorMetadata>True</TypeScriptEmitDecoratorMetadata>
+    <TypeScriptExperimentalDecorators>True</TypeScriptExperimentalDecorators>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

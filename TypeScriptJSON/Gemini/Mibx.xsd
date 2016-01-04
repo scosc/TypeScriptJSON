@@ -1,0 +1,1315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Mibx"
+    targetNamespace="http://SattelliteCom/Schemas/Mibx.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://SattelliteCom/Schemas/Mibx.xsd"
+    xmlns:mstns="http://SattelliteCom/Schemas/Mibx.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://SattelliteCom/Schemas/Common.xsd"
+    xmlns:mibx="http://SattelliteCom/Schemas/Mibx.xsd"
+    version="2.0"
+>
+
+  <xs:import namespace="http://SattelliteCom/Schemas/Common.xsd" schemaLocation="Common.xsd"></xs:import>
+
+  <!-- Types definitions -->
+
+  <xs:simpleType name="ASN1">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a valid ASN1 name - first char is lower letter
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:pattern value="^[a-z]{1}\w*"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MibOIDPart">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a sub id of current item - the last part of full OID
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:int">      
+      <xs:minInclusive value="0"></xs:minInclusive>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OID">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a valid OID
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">      
+      <xs:pattern value="^[1-9][0-9]*(\.[0-9]*)*$"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Status">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the status of item
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="optional"></xs:enumeration>
+      <xs:enumeration value="mandatory"></xs:enumeration>
+      <xs:enumeration value="obsolete"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the type of Param element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="String"></xs:enumeration>
+      <xs:enumeration value="Bool"></xs:enumeration>
+      <xs:enumeration value="OID"></xs:enumeration>
+      <xs:enumeration value="Int32Bits"></xs:enumeration>
+      <xs:enumeration value="Int8"></xs:enumeration>
+      <xs:enumeration value="UInt8"></xs:enumeration>
+      <xs:enumeration value="Int16"></xs:enumeration>
+      <xs:enumeration value="UInt16"></xs:enumeration>
+      <xs:enumeration value="Int32"></xs:enumeration>
+      <xs:enumeration value="UInt32"></xs:enumeration>
+      <xs:enumeration value="Int64"></xs:enumeration>
+      <xs:enumeration value="UInt64"></xs:enumeration>
+      <xs:enumeration value="Float"></xs:enumeration>
+      <xs:enumeration value="Double"></xs:enumeration>
+      <xs:enumeration value="DateTime"></xs:enumeration>
+      <xs:enumeration value="Date"></xs:enumeration>
+      <xs:enumeration value="Time"></xs:enumeration>
+      <xs:enumeration value="TimeTicks"></xs:enumeration>
+      <xs:enumeration value="MAC"></xs:enumeration>
+      <xs:enumeration value="IPv4">
+        <xs:annotation>
+          <xs:documentation>
+            IPv4 address in dotted notation: 192.168.100.1
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="IPv4 Hex">
+        <xs:annotation>
+          <xs:documentation>
+            IPv4 address in dotted notation when all parts are hex numbers: c0.a8.64.01
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="IPv4 Multicast"></xs:enumeration>
+      <xs:enumeration value="IPv4 Multicast Hex"></xs:enumeration>
+      <xs:enumeration value="IPv4 Unicast"></xs:enumeration>
+      <xs:enumeration value="IPv4 Unicast Hex"></xs:enumeration>
+      <xs:enumeration value="IPv6"></xs:enumeration>
+      <xs:enumeration value="IPv6 Prefix Length"></xs:enumeration>
+      <xs:enumeration value="RowStatus"></xs:enumeration>      
+      <xs:enumeration value="Complex">
+        <xs:annotation>
+          <xs:documentation>
+            For backward compatibility with old GDF - parameters of this type are not in use in NG NMS and exported as Obsolete
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+		  <xs:enumeration value="Subnet Mask">
+			<xs:annotation>
+				<xs:documentation>
+					IPv4 subnet mask in dotted notation: 255.255.0.0
+				</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+      <xs:enumeration value="File"></xs:enumeration>
+	</xs:restriction>
+  </xs:simpleType>
+ 
+  <xs:simpleType name="Units">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the unit of Param element
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="common:Units"/>    
+  </xs:simpleType>
+
+  <xs:simpleType name="MibMaxAccess">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the SNMP MAX-ACCESS
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="not-accessible"></xs:enumeration>
+      <xs:enumeration value="accessible-for-notify"></xs:enumeration>
+      <xs:enumeration value="read-only"></xs:enumeration>
+      <xs:enumeration value="read-write"></xs:enumeration>
+      <xs:enumeration value="read-create"></xs:enumeration>      
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ObjectMode">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the mode of MibxObject
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"></xs:enumeration>
+      <xs:enumeration value="template"></xs:enumeration>
+      <xs:enumeration value="element"></xs:enumeration>
+      <xs:enumeration value="NMS"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ServiceInterruption">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the level of service interruption when item is set
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"></xs:enumeration>
+      <xs:enumeration value="interruption"></xs:enumeration>
+      <xs:enumeration value="reset"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DefaultUpgrade">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the modes for upgrade of default value
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"></xs:enumeration>
+      <xs:enumeration value="overwrite-unchanged"></xs:enumeration>
+      <xs:enumeration value="overwrite"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SupportedIn">
+    <xs:annotation>
+      <xs:documentation>
+        Defines location of item in code
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="operational"></xs:enumeration>
+      <xs:enumeration value="boot"></xs:enumeration>
+      <xs:enumeration value="both"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EventAttributes">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the Event attributes
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="id"></xs:enumeration>
+      <xs:enumeration value="sequence"></xs:enumeration>
+      <xs:enumeration value="status"></xs:enumeration>
+      <xs:enumeration value="param"></xs:enumeration>
+      <xs:enumeration value="version"></xs:enumeration>
+      <xs:enumeration value="SubModule"></xs:enumeration>
+      <xs:enumeration value="SubModuleInstance"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EventAttrMaps">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the Event attribute maps
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="absolute"></xs:enumeration>
+      <xs:enumeration value="lookup"></xs:enumeration>
+      <xs:enumeration value="GetValue"></xs:enumeration>
+      <xs:enumeration value="position"></xs:enumeration>
+      <xs:enumeration value="replace"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ParamUsage">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the unit of Param element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"></xs:enumeration>
+      <xs:enumeration value="config"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CommandsContainer" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Commands container object
+      </xs:documentation>
+    </xs:annotation>    
+    <xs:choice minOccurs="0" maxOccurs="unbounded">            
+        <xs:element ref="Command" minOccurs="0" maxOccurs="unbounded"></xs:element>      
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="CommandBase" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="common:UniqueItem">
+        <xs:sequence>
+          <xs:element ref="common:Description" minOccurs="1" maxOccurs="1"></xs:element>
+          <xs:element name="Action" type="common:GUID" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                UID of parameters attached to trap
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Parameters" type="common:GUID" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                UID of parameters attached to trap
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="Command">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="CommandBase">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="Commands">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="CommandsContainer">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="MibxItem" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the base item of MIBX
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexContent>
+      <xs:extension base="common:UniqueItem">
+        <xs:sequence>
+          <xs:element ref="common:Description" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element name="DevNote" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element name="DevNote2" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element name="DevNote3" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element name="DevNote4" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="MibName" type="ASN1" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the MIB name of item. Follows ASN1 format
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ID" type="MibOIDPart" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the last part of OID assigned to current node
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="OID" type="OID">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the full OID of current node. Auto generated by pack process
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Status" type="Status" default="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the status of node
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ExportToMib" type="xs:boolean" default="true">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies whether export this item to MIB
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ExportToC" type="xs:boolean" default="true">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies whether export this item to C
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="SupportedIn" type="SupportedIn" default="operational">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies in which code this item is supported
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ExportToJava" type="xs:boolean" default="true">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies whether export this item to Java
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="MibxObject" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the MIBX object
+        Extends MibxItem
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexContent>
+      <xs:extension base="MibxItem">
+        <xs:sequence>
+          <xs:element ref="Transport" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element ref="Dependencies" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
+        <xs:attribute name="MaxAccess" type="MibMaxAccess" default="read-only"></xs:attribute>
+        <xs:attribute name="ReadAccess" type="common:AccessLevel" default="guest"></xs:attribute>
+        <xs:attribute name="WriteAccess" type="common:AccessLevel" default="operator"></xs:attribute>
+        <xs:attribute name="Mode" type="ObjectMode" default="none"></xs:attribute>
+        <xs:attribute name="ServiceInterruption" type="ServiceInterruption" default="reset"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="MibxContainer" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the MIBX container object
+        Extends MibxObject
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexContent>
+      <xs:extension base="MibxObject">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="Node"></xs:element>
+          <xs:element ref="Param"></xs:element>
+          <xs:element ref="Table"></xs:element>
+          <xs:element ref="Trap"></xs:element>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <!-- Elements definitions -->
+
+  <xs:complexType name="InactiveDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the inactive dependency - when conditions are true the item is inactive
+      </xs:documentation>
+    </xs:annotation>      
+    <xs:complexContent>
+      <xs:extension base="common:BaseInactiveDependency"></xs:extension>
+    </xs:complexContent>    
+  </xs:complexType>
+
+  <xs:element name="ReadOnlyDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the read-only dependency - when conditions are true the item is read-only
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:Dependency"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LicenseDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the license dependency - the item is licensed
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:Dependency">
+          <xs:attribute name="LicenseCode" type="common:NonEmptyString" use="required">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the feature code
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:keyref name="LicenseDependencyKey" refer="LicenseCodeKey">
+      <xs:selector xpath="."></xs:selector>
+      <xs:field xpath="@LicenseCode"></xs:field>
+    </xs:keyref>
+    
+  </xs:element>
+
+  
+  <xs:element name="SetValue">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the value assigned by "set value" dependency
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="UID" type="common:GUID">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the UID of source item for "set value" action
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Absolute" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the absolute value
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+
+        <!-- FOR FUTURE USE - add more options here -->
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SetValueDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the "set value" dependency - when conditions are true the item gets the value specified by SetValue element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:Dependency">
+          <xs:sequence>
+            <xs:element ref="SetValue" minOccurs="1" maxOccurs="1"></xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LimitsDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the "allow/not allowed values" dependency - when conditions are true only enums/ranges specified by this element are allowed
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:Dependency">
+          <xs:sequence>
+            <xs:element name="LimitId" type="common:GUID" minOccurs="0" maxOccurs="unbounded"></xs:element>
+          </xs:sequence>
+          <xs:attribute name="Allow" type="xs:boolean" default="true"></xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TableLimitsDependency">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the "set value" dependency - when conditions are true the item gets the value specified by SetValue element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:Dependency">
+          <xs:sequence>
+            <xs:element name="MinRows" type="xs:int" default="0" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="MaxRows" type="xs:int" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="MinRowsLookup" type="common:GUID" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="MaxRowsLookup" type="common:GUID" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="RangeDependency">
+    <xs:complexContent>
+      <xs:extension base="common:Dependency">
+        <xs:attribute name="EndUID" type="common:GUID"></xs:attribute>  
+      </xs:extension>
+    </xs:complexContent>    
+  </xs:complexType>
+  
+  <xs:complexType name="ChangeStatusDependency">
+    <xs:complexContent>
+      <xs:extension base="common:Dependency">
+        <xs:attribute type="Status" name="Status" default="optional"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DisableStartsProcessDependency">
+    <xs:complexContent>
+      <xs:extension base="common:Dependency"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="Dependencies">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the dependencies of element
+      </xs:documentation>
+    </xs:annotation>  
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="InactiveDependency" name="InactiveDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="SetValueDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="LimitsDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="LicenseDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="TableLimitsDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="ReadOnlyDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element name="RangeDependency" type="RangeDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element name="ChangeStatusDependency" type="ChangeStatusDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element name="DisableStartsProcessDependency" type="DisableStartsProcessDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Module">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Module object - corresponds to SNMP MODULE-OBJECT
+        Extends MibxContainer
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="MibxContainer">
+          <xs:annotation>
+            <xs:documentation>
+              MibxItem content:
+                Name attribute - used for name of MODULE-OBJECT
+                OID attribute - root OID of MODULE-OBJECT
+                Rest ignored
+              All MibxObject content - ignored
+            </xs:documentation>
+          </xs:annotation>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Validators -->
+
+    <xs:unique name="ModuleOIDUniqueness">
+      <xs:selector xpath="./*"></xs:selector>
+      <xs:field xpath="@ID"></xs:field>
+    </xs:unique>
+  </xs:element>
+
+  <xs:element name="Node">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Node object - corresponds to SNMP OBJECT IDENTIFIER
+        Extends MibxContainer
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>      
+      <xs:complexContent>        
+        <xs:extension base="MibxContainer">
+          <xs:attribute name="Imported" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="ImportedMibName" type="xs:string" use="optional"></xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+
+    </xs:complexType>
+
+    <!-- Validators -->
+
+    <xs:unique name="NodeOIDUniqueness">
+      <xs:selector xpath="./*"></xs:selector>
+      <xs:field xpath="@ID"></xs:field>
+    </xs:unique>    
+  </xs:element>
+
+  <xs:complexType name="RangeBase" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the base item for range/length
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="UID" type="common:GUID" use="required"></xs:attribute>
+    <xs:attribute name="Min" type="xs:double" use="required"></xs:attribute>
+    <xs:attribute name="Max" type="xs:double" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="Range">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the range for Param element
+        Extends RangeBase
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RangeBase"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="StrLen">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the length of string Param
+        Extends RangeBase
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RangeBase"></xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="EnumBase" abstract="true">
+    <xs:complexContent>
+      <xs:restriction base="RangeBase">
+        <xs:attribute name="Min" type="xs:double" use="required"></xs:attribute>
+        <xs:attribute name="Max" type="xs:double" use="prohibited"></xs:attribute>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Enum">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the allowed value - enum for Param element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="EnumBase">
+          <xs:attribute ref="common:Name" use="required"></xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Limits">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the limits for Param element
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>        
+        <xs:choice minOccurs="0" maxOccurs="1">
+          <xs:element ref="Range" minOccurs="1" maxOccurs="unbounded"></xs:element>
+          <xs:element ref="Enum" minOccurs="1" maxOccurs="unbounded"></xs:element>
+          <xs:element ref="StrLen" minOccurs="1" maxOccurs="unbounded"></xs:element>
+        </xs:choice>
+        <xs:element name="RegEx" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Transport">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the SNMP special definitions of MIBX item
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:attribute name="Sequence" type="xs:int" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the order of items in SNMP-Set operation
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="PDUSequence" type="xs:int" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the combining rules for putting number of items in single PDU
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Upgrade">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the upgrade behaviour for Param
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:attribute name="Default" type="DefaultUpgrade" default="none">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the mode of default value upgrade
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Convert" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the upgrade convertion
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="Param">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Param element - correspondents to SNMP OBJECT-TYPE
+        Extends MibxObject
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="MibxObject">
+          <xs:sequence>
+            <xs:element ref="Limits" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element ref="Upgrade" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+
+          <xs:attribute name="Type" type="Type" use="required"></xs:attribute>
+          <xs:attribute name="Default" type="xs:string" use="optional"></xs:attribute>
+          <!-- Does not build if name contains word "set" -->
+          <xs:attribute name="FlashOffseet" type="xs:string" use="optional"></xs:attribute>
+          <xs:attribute name="Units" type="Units" default=""></xs:attribute>
+          <xs:attribute name="Usage" type="ParamUsage" default="none"></xs:attribute>
+          <xs:attribute name="NonDuplicatable" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="AllowSuggestedValue" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="AllowSuggestedValueOnValueChanged" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="AllowPossibleValues" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="AllowMultipleEdit" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="StartsProcess" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="Unique" type="xs:boolean" default="false"></xs:attribute>          
+          <xs:attribute name="Searchable" type="xs:boolean" default="false"></xs:attribute>
+          <xs:attribute name="MessageOnChange" type="xs:string" use="optional"></xs:attribute>          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ColumnDefault">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the default value for table column in specific row
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:attribute name="UID" type="common:GUID" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the UID of Param element which belongs to specific table
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Value" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies default value
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="RowDefaults">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the defaults of table columns per row
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Row" minOccurs="1" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the defaults of row
+            </xs:documentation>
+          </xs:annotation>
+
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="ColumnDefault" minOccurs="1" maxOccurs="unbounded"></xs:element>
+            </xs:sequence>
+            <xs:attribute name="IndexValue" type="xs:string" use="required"></xs:attribute>
+          </xs:complexType>
+
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TableDef">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the augments/index/rowstatus definition of Table
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:choice  minOccurs="0" maxOccurs="1">
+        <xs:element name="Augments" type="common:GUID" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies UID of table which is extended by current table
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:sequence>
+          <xs:element name="Index" type="common:GUID" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies UID of index column
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RowStatus" type="common:GUID" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies UID of RowStatus column
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:choice>
+    </xs:complexType>
+    
+  </xs:element>
+  
+  <xs:element name="Table">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Table element - correspondents to SNMP OBJECT-TYPE with SEQUENCE
+        Extends MibxContainer
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="MibxContainer">
+          <xs:sequence>
+            <xs:element ref="TableDef" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element ref="RowDefaults" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+
+          <xs:attribute name="MinRows" type="xs:int" default="0"></xs:attribute>
+          <xs:attribute name="MaxRows" type="xs:int" use="optional"></xs:attribute>
+          <xs:attribute name="RowsAuth" type="common:AccessLevel" default="admin"></xs:attribute>
+          <xs:attribute name="Usage" type="ParamUsage" default="none"></xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Validators -->
+
+    <xs:unique name="TableOIDUniqueness">
+      <xs:selector xpath="./*"></xs:selector>
+      <xs:field xpath="@ID"></xs:field>
+    </xs:unique>
+  </xs:element>
+
+  <xs:element name="Trap">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the Trap element - correspondents to SNMP NOTIFICATION-TYPE
+        Extends MibxItem
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="MibxItem">
+          <xs:sequence>
+            <xs:element name="Object" type="common:GUID" minOccurs="0" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:documentation>
+                  UID of parameters attached to trap
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element ref="TrapMapping" minOccurs="0" maxOccurs="unbounded"></xs:element>
+          </xs:sequence>
+
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Validators -->
+
+  </xs:element>
+
+  <xs:complexType name="HealthRule" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="common:UniqueItem">
+        <xs:sequence>
+          <xs:element ref="common:Description" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element ref="common:Condition" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
+        <xs:attribute name="Severity" type="common:Severity" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The severity that will be used before the action's WaitPeriod will expire
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="SeverityAfter" type="common:Severity" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The severity that will be used after the action's WaitPeriod will expire
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="WaitPeriod" type="xs:int" default="0">
+          <xs:annotation>
+            <xs:documentation>
+              Time to wait before changing the severity.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Interval" type="xs:int" default="60">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies interval in seconds for retriving SNMP telemetry
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Timeout" type="xs:int" default="1">
+          <xs:annotation>
+            <xs:documentation>
+              Number of seconds before retrying
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Retries" type="xs:int" default="1">
+          <xs:annotation>
+            <xs:documentation>
+              Number of retries before declaring Timeout.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="EventID" type="xs:int" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the ID of corresponding event
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SNMPHealthOid">
+    <xs:complexType>
+      <xs:attribute name="Oid" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the OID (UID for GDFX)
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SNMPHealthRule">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="HealthRule">
+          <xs:sequence>
+            <xs:element ref="SNMPHealthOid" minOccurs="1" maxOccurs="unbounded"></xs:element>
+            <xs:element ref="TrapMapping" minOccurs="0" maxOccurs="unbounded"></xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Validators -->
+    <xs:keyref name="SNMPHealthRuleKey" refer="EventIDKey">
+      <xs:selector xpath="."></xs:selector>
+      <xs:field xpath="@EventID"></xs:field>
+    </xs:keyref>
+
+  </xs:element>
+
+  <xs:element name="PingHealthRule">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="HealthRule">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Validators -->
+    <xs:keyref name="PingHealthRuleKey" refer="EventIDKey">
+      <xs:selector xpath="."></xs:selector>
+      <xs:field xpath="@EventID"></xs:field>
+    </xs:keyref>       
+  </xs:element>
+
+  <xs:element name="Health">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="SNMPHealthRule" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        <xs:element ref="PingHealthRule" minOccurs="0" maxOccurs="unbounded"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="EventBase" abstract="true">    
+      <xs:complexContent>
+        <xs:extension base="common:UniqueItem">
+          <xs:sequence>
+            <xs:element ref="common:Description" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="Arg" type="common:GUID" minOccurs="0" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the UID of parameter used as argument of event. The order of arguments is matter - corresponds to %xxx in Description.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="ID" type="xs:int" use="required"></xs:attribute>
+          <xs:attribute name="Category" type="xs:int" use="required"></xs:attribute>
+          <xs:attribute name="Type" type="xs:int" use="required"></xs:attribute>          
+          <xs:attribute name="Version" use="required">
+              <xs:simpleType>                         
+                <xs:restriction base="xs:int">
+                  <xs:minInclusive value="1"/>              
+                </xs:restriction>
+              </xs:simpleType>
+          </xs:attribute>          
+          <xs:attribute name="Severity" type="common:Severity" use="required"></xs:attribute>
+          <xs:attribute name="ExportToC" type="xs:boolean" default="true">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies whether export this item to C
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>  
+
+  <xs:element name="Event">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="EventBase">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>    
+  </xs:element>
+  
+  <xs:element name="Alarm">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="EventBase">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+     
+  <xs:complexType name="EventBaseContainer" abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the EventBase container object        
+      </xs:documentation>
+    </xs:annotation>    
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Event"></xs:element>
+      <xs:element ref="Alarm"></xs:element>          
+    </xs:choice>    
+  </xs:complexType>
+
+  <xs:element name="Alarms">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="EventBaseContainer">          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Events">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="EventBaseContainer">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="KeyValue">
+    <xs:complexType>
+      <xs:attribute name="Key" type="xs:string"></xs:attribute>
+      <xs:attribute name="Value" type="xs:string"></xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="ReplacePattern">
+    <xs:sequence>
+      <xs:element ref="KeyValue" minOccurs="1" maxOccurs="unbounded"></xs:element>
+    </xs:sequence>    
+  </xs:complexType>
+  
+  <xs:element name="TrapMapping">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element name="RegEx"  type="xs:string"/>
+        <xs:element name="ReplacePattern" type="ReplacePattern" />        
+      </xs:choice>
+      
+      <xs:attribute name="EventAttr" type="EventAttributes" use="required"></xs:attribute>
+      <xs:attribute name="Map" type="EventAttrMaps" use="required"></xs:attribute>
+      <xs:attribute name="Value" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the absolute value if Map==absolute, position index if Map==position, otherwise specifies OID (UID for GDFX)
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>      
+    </xs:complexType>
+    
+    <!-- Validators -->
+    
+    <xs:unique name="ReplacePatternUniqueness">
+      <xs:selector xpath="./mibx:ReplacePattern/mibx:KeyValue"></xs:selector>
+      <xs:field xpath="@Key"></xs:field>
+    </xs:unique>    
+  </xs:element>
+
+
+  <!-- Mibx -->
+
+  <xs:element name="Mibx">
+    <xs:annotation>
+      <xs:documentation>
+        Root element of MIBX file
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+
+      <xs:sequence>                
+        <xs:element ref="common:Links" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="common:Licenses" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Health" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Events" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Alarms" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Commands" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Module" minOccurs="0" maxOccurs="1"></xs:element>
+      </xs:sequence>
+
+      <xs:attribute ref="common:Schema" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the version of MIBX schema (Mibx.xsd) used for creation of XML
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+
+    <!-- Validators -->       
+      
+    <xs:unique name="UIDNameUniqueness">
+      <xs:selector xpath=".//*"></xs:selector>
+      <xs:field xpath="@common:UID"></xs:field>
+    </xs:unique>
+
+    <!--<xs:unique name="localUIDNameUniqueness">
+      <xs:selector xpath=".//*"></xs:selector>
+      <xs:field xpath="@UID"></xs:field>
+    </xs:unique>-->
+
+    <xs:unique name="MibNameUniqueness">
+      <xs:selector xpath=".//*"></xs:selector>
+      <xs:field xpath="@MibName"></xs:field>
+    </xs:unique>
+
+    <xs:unique name="HealthRuleNameUniqueness">
+      <xs:selector xpath="./mibx:Health/*"/>
+      <xs:field xpath="@common:Name"/>
+    </xs:unique>
+
+    <xs:unique name="EventNameUniqueness">
+      <xs:selector xpath="./mibx:Events/* | ./mibx:Alarms/*"></xs:selector>
+      <xs:field xpath="@common:Name"></xs:field>
+    </xs:unique>      
+    
+    <xs:key name="EventIDKey">
+      <xs:selector xpath="./mibx:Alarms/mibx:Alarm|./mibx:Events/mibx:Event"></xs:selector>      
+      <xs:field xpath="@ID"></xs:field>
+    </xs:key>    
+    
+    <xs:key name="LicenseCodeKey">
+      <xs:selector xpath="./common:Licenses/common:License"></xs:selector>
+      <xs:field xpath="@Code"></xs:field>
+    </xs:key>
+        
+  </xs:element>
+
+
+</xs:schema>

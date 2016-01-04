@@ -1,0 +1,561 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Guix"
+    targetNamespace="http://SattelliteCom/Schemas/Guix.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://SattelliteCom/Schemas/Guix.xsd"
+    xmlns:mstns="http://SattelliteCom/Schemas/Guix.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://SattelliteCom/Schemas/Common.xsd"
+    xmlns:mibx="http://SattelliteCom/Schemas/Mibx.xsd"
+    version="2.0">
+  
+  <xs:import namespace="http://SattelliteCom/Schemas/Common.xsd" schemaLocation="Common.xsd"></xs:import>
+  <xs:import namespace="http://SattelliteCom/Schemas/Mibx.xsd" schemaLocation="Mibx.xsd"></xs:import>
+
+  <xs:complexType name="AttachedMibxItem" abstract="true">
+    <xs:attribute name="Attached" type="common:GUID" use="required"></xs:attribute>
+    <xs:attribute name="UID" type="common:GUID" use ="optional"></xs:attribute>
+    <xs:attribute name="DisplayName" type="xs:string" use ="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="GuixItem">
+    <xs:complexContent>
+      <xs:extension base="AttachedMibxItem">
+        <xs:attribute name="Column" type="xs:int" default="0"></xs:attribute>
+        <xs:attribute name="Colspan" type="xs:int" default="1"></xs:attribute>
+        <xs:attribute name="Row" type="xs:int" default="0"></xs:attribute>
+        <xs:attribute name="Rowspan" type="xs:int" default="1"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+    </xs:complexType> 
+  
+  <xs:element name="GuixTableColumn">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the table column.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="AttachedMibxItem">
+          <xs:sequence>
+            <xs:element ref="GuixPresentation" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+          <xs:attribute type="common:GUID" name="GroupUID" use="optional"></xs:attribute>
+          <xs:attribute type="xs:boolean" name="IsSingleRowTableName" default="false"></xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="ColumnGroup">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the table column.
+      </xs:documentation>
+    </xs:annotation>    
+      <xs:complexContent>
+        <xs:extension base="common:UniqueItem">          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>  
+  
+  <xs:element name="GuixPresentation">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the presentation options for object
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>        
+        <xs:element minOccurs="0" maxOccurs="1" type="ValueConverter" name="ValueConverter"></xs:element>
+        <xs:element minOccurs="0" maxOccurs="1" type="NumericUpDown" name="NumericUpDown"></xs:element>
+        <xs:element minOccurs="0" maxOccurs="1" type="MultilineTextOptions" name="MultilineTextOptions"></xs:element>
+      </xs:sequence>
+      <xs:attribute name="IsMultilineText" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies whether string telemetry need to be shown as multiline text block
+            Ignored for non string objects
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="IsUrl" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies whether string telemetry need to be shown as hyperlink
+            Ignored for non string objects
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DoNotConvertToLocalTime" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies whether time value should be converted to client local time
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ShowAsProfileSelector" type="xs:boolean" default="false">        
+      </xs:attribute>
+      <xs:attribute name="IsPasswordField" type="xs:boolean" default="false"/>
+      <xs:attribute name="NumberOfDecimalDigits" type="NumberOfDecimalDigits" default="2">
+        <xs:annotation>
+          <xs:documentation>
+            The number of decimal places to use in numeric floating point values. The default is InvariantInfo 2.
+            Example 3.1 - one digit, 3.14 - default 2, 3,1415 - 4. Maximum is 99 look to NumberFormatInfo
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>      
+    </xs:complexType>    
+  </xs:element>
+
+   <xs:complexType name="MultilineTextOptions">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies parameters for a multiline text box
+        Ignored for non string objects
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Lines" type="xs:unsignedInt" default="6" >      
+    </xs:attribute>
+    <xs:attribute name="Wrap" type="xs:boolean" default="true">
+    </xs:attribute>
+    <xs:attribute name="WidthFactor" type="xs:unsignedInt" default="2">
+    </xs:attribute>
+  </xs:complexType>   
+  
+  <xs:complexType name="NumericUpDown">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies whether the numeric control should be displayed as Numeric UpDown control
+        Used only for numeric values
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Step" type="xs:double" default="1">     
+    </xs:attribute>
+    <xs:attribute name="AllowDirectEdit" type="xs:boolean" default="false">
+    </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="ValueConverter">
+    <xs:complexContent>
+      <xs:extension base="common:ValueConverterBase"/>
+    </xs:complexContent>    
+  </xs:complexType>  
+  
+  <xs:element name="GuixObject">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the object: input parameter or telemetry.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="GuixItem">
+          <xs:sequence>
+            <xs:element ref="GuixPresentation" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>  
+  
+  <xs:element name="GuixTable">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the table. Attached property contains the UID of primary table - used for Name, Description, MinRow and MaxRows
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="GuixItem">
+          <xs:sequence>
+            <xs:element ref="GuixTableColumn" minOccurs="1" maxOccurs="unbounded"></xs:element>
+            <xs:element ref="GuixTable" minOccurs="0" maxOccurs="unbounded"></xs:element>
+            <xs:element ref="Commands" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element type="ColumnGroup" name="ColumnGroup" minOccurs="0" maxOccurs="unbounded"></xs:element>
+          </xs:sequence>
+          <xs:attribute name="HideIndex" type="xs:boolean" default="false"/>
+          <xs:attribute name="DefaultMaxRepetitions" type="xs:int" default="10">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the default number of rows which will be required from NMS server.
+                When equals to 0 - all available rows will be returned by default
+                Ignored for tables in confiduration sections
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="IsSingleRowTable" type="xs:boolean" default="false"/>
+          <xs:attribute name="DoNotExpand" type="xs:boolean" default="false">
+            <xs:annotation>
+              <xs:documentation>
+                Applicable only for inner tables. By default all inner tables are expanded. If is set to true table will not be expanded, instead user should to open another view to see inner table.
+                Added because of performance issues with large tables.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="GuixGroup">
+    <xs:complexContent>
+      <xs:extension base="common:UniqueItem">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="GuixObject"></xs:element>
+            <xs:element ref="GuixTable"></xs:element>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="Row" type="xs:int" default="0"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- 
+  Guix Section redesign main change: display all items in one column instead of two (we don't need Column, Row Colspan, Rowspan - now this is just a list but not grid) 
+  TODO - when all users will change gdf's, display elements in the order they appear in the xml skipping Row property
+  -->
+  <xs:element name="GuixSection">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the section that combines Guix items and tables
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:UniqueItem">
+          <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element ref="GuixObject"></xs:element>
+              <xs:element ref="GuixTable"></xs:element>
+              <xs:element name="GuixGroup" type="GuixGroup"></xs:element>
+            </xs:choice>
+            <xs:element name="Dependencies" type="GuixDependencies" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+
+          <xs:attribute name="ShowTitle" type="xs:boolean" default="true">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies whether the title and expand/collapse button are shown
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="IsExpanded" type="xs:boolean" default="true">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies whether the section is expanded by default (ignored when ShowTitle is false)
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="UIAccessLevel" type="common:UIAccessLevel" default="normal">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the UI access level that user must have to see this item
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="LinkedGuixNode">
+    <xs:complexType>
+      <xs:attribute name="NodeUID" type="common:GUID" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="GuixInactiveDependency">
+    <xs:complexContent>
+      <xs:extension base="common:BaseInactiveDependency"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DependenciesBase" abstract="true"/>  
+  
+  <xs:complexType name="GuixDependencies">
+    <xs:complexContent>
+      <xs:extension base="DependenciesBase">
+        <xs:sequence>
+          <xs:element name="InactiveDependency" type="GuixInactiveDependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="GuixNode">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the tree node
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:UniqueItem">          
+          <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element ref="LinkedGuixNode"/>
+              <xs:element ref="GuixNode"/>
+            </xs:choice>
+            <xs:element ref="GuixSection" minOccurs="0" maxOccurs="unbounded"></xs:element>
+            <xs:element name="Dependencies" type="GuixDependencies" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+          <xs:attribute name="AutoRefreshInterval" type="xs:int" default="15">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the automatic refresh interval for telemetries nodes, seconds.
+                When equals to 0 - no automatic refresh
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="UIAccessLevel" type="common:UIAccessLevel" default="normal">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the UI access level that user must have to see this item
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="IsInfo" type="xs:boolean" default="false"/>          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType  name="GuixContainer" abstract="true">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="GuixNode"/>
+        <xs:element ref="LinkedGuixNode"/>
+      </xs:choice>      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="Configuration">
+    <xs:annotation>
+      <xs:documentation>
+        Container for configuration definition
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="GuixContainer">          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>    
+  </xs:element>
+  
+  <xs:element name="Telemetries">
+    <xs:annotation>
+      <xs:documentation>
+        Container for configuration definition
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="GuixContainer">          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="GuixCommandParameter">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the command parameter.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="AttachedMibxItem">
+          <xs:sequence>
+            <xs:element ref="GuixPresentation" minOccurs="0" maxOccurs="1"></xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="GuixPrimaryCommandObject">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the MIBX param object that triggers the command. The default value will be send when command is executed
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="AttachedMibxItem">          
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="GuixCommand">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the command. The MIBX item attached to GuixCommand is the "command button"
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>      
+      <xs:complexContent>        
+        <xs:extension base="common:UniqueItem">          
+          <xs:sequence>
+            <xs:element ref="GuixPrimaryCommandObject" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element ref="GuixCommandParameter" minOccurs="0" maxOccurs="unbounded"></xs:element>
+          </xs:sequence>
+          <xs:attribute type="xs:string" name="Value"/>
+          <xs:attribute type="xs:boolean" default="false" name="AttachToRowInstance">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies if the command is enabled only for concrete row instance                
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="UIAccessLevel" type="common:UIAccessLevel" default="normal">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the UI access level that user must have to see this item
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="xs:boolean" name="QuickAccess" default="false"/>
+          <xs:attribute type="xs:boolean" name="UseInBulk" default="true">
+            <xs:annotation>
+              <xs:documentation>
+                Only if the parameter is true, it is available for Bulk operations.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>        
+      </xs:complexContent>      
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="Element" abstract="true"/>
+  
+  <xs:element name="GuixCommandSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the separator line in command menu
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="Element"/>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="GuixCommandNode">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the command menu node
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="common:UniqueItem">
+          <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element ref="GuixCommand"/>
+              <xs:element ref="GuixCommandNode"/>
+              <xs:element ref="GuixCommandSeparator"/>
+              <xs:element ref="LinkedGuixCommandNode"/>
+              <xs:element ref="LinkedGuixCommand"/>
+            </xs:choice>
+          </xs:sequence>
+          <xs:attribute name="UIAccessLevel" type="common:UIAccessLevel" default="normal">
+            <xs:annotation>
+              <xs:documentation>
+                Specifies the UI access level that user must have to see this item
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LinkedGuixCommandNode">
+    <xs:complexType>
+      <xs:attribute name="CommandNodeUID" type="common:GUID" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LinkedGuixCommand">
+    <xs:complexType>
+      <xs:attribute name="CommandUID" type="common:GUID" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Commands">
+    <xs:annotation>
+      <xs:documentation>
+        Container for commands definition
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="GuixCommandNode"/>
+          <xs:element ref="GuixCommandSeparator"/>
+          <xs:element ref="LinkedGuixCommandNode"/>
+          <xs:element ref="LinkedGuixCommand"/>
+          <xs:element ref="GuixCommand"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Guix">
+    <xs:annotation>
+      <xs:documentation>
+        Root element of GUIX file
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Configuration" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Telemetries" minOccurs="0" maxOccurs="1"></xs:element>
+        <xs:element ref="Commands" minOccurs="0" maxOccurs="1"></xs:element>
+      </xs:sequence>
+      
+      <xs:attribute ref="common:Schema" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the version of GUIX schema (Guix.xsd) used for creation of XML
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+
+    <!-- Validators -->
+    <xs:unique name="UIDNameUniqueness">
+      <xs:selector xpath=".//*"></xs:selector>
+      <xs:field xpath="@common:UID"></xs:field>
+    </xs:unique>
+    
+  </xs:element>
+
+  <xs:simpleType name="NumberOfDecimalDigits">
+    <xs:restriction base="xs:unsignedByte">
+      <xs:maxInclusive value="99"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+</xs:schema>
